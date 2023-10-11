@@ -161,5 +161,7 @@ export const registrationValidationSchema = Yup.object().shape({
         .of(familyMemberSchema)
         .min(1, "At least one family member is required");
     }
-  })
+  }),
+  userCaptcha: Yup.number()
+    .required("Captcha is required"),
 });

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import DatePicker from 'react-datepicker';
@@ -14,6 +14,8 @@ import {
 } from 'react-simple-captcha';
 
 const SignUp = () => {
+  const [profilePicPreview, setProfilePicPreview] = useState(null);
+  const [digitalSignPreview, setDigitalSignPreview] = useState(null);
   useEffect(() => {
     loadCaptchaEnginge(6, 'maroon', 'white', 'numbers');
   }, []);
@@ -679,29 +681,43 @@ const SignUp = () => {
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Profile Pic
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept=".jpg, .jpeg, .png"
-                      name="profilePic"
-                      onChange={(event) => {
-                        formik.setFieldValue(
-                          'profilePic',
-                          event.currentTarget.files[0],
-                        );
-                      }}
-                      className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
-                        formik.touched.profilePic && formik.errors.profilePic
-                          ? 'border-danger'
-                          : ''
-                      }`}
-                    />
-                    {formik.touched.profilePic && formik.errors.profilePic && (
-                      <div className="error-message">
-                        <p className="text-danger font-medium text-xs mt-1">
-                          {formik.errors.profilePic}
-                        </p>
-                      </div>
+                  <div className="flex items-center">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        name="profilePic"
+                        onChange={(event) => {
+                          setProfilePicPreview(
+                            URL.createObjectURL(event.currentTarget.files[0]),
+                          );
+                          formik.setFieldValue(
+                            'profilePic',
+                            event.currentTarget.files[0],
+                          );
+                        }}
+                        className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                          formik.touched.profilePic && formik.errors.profilePic
+                            ? 'border-danger'
+                            : ''
+                        }`}
+                      />
+                      {formik.touched.profilePic &&
+                        formik.errors.profilePic && (
+                          <div className="error-message">
+                            <p className="text-danger font-medium text-xs mt-1">
+                              {formik.errors.profilePic}
+                            </p>
+                          </div>
+                        )}
+                    </div>
+
+                    {profilePicPreview && (
+                      <img
+                        src={profilePicPreview}
+                        alt="Preview"
+                        className="w-16 h-16 object-cover ml-4"
+                      />
                     )}
                   </div>
                 </div>
@@ -710,34 +726,48 @@ const SignUp = () => {
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Digital Signature
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept=".jpg, .jpeg, .png"
-                      name="digitalSignature"
-                      onChange={(event) => {
-                        formik.setFieldValue(
-                          'digitalSignature',
-                          event.currentTarget.files[0],
-                        );
-                      }}
-                      className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
-                        formik.touched.digitalSignature &&
-                        formik.errors.digitalSignature
-                          ? 'border-danger'
-                          : ''
-                      }`}
-                    />
-                    {formik.touched.digitalSignature &&
-                      formik.errors.digitalSignature && (
-                        <div className="error-message">
-                          <p className="text-danger font-medium text-xs mt-1">
-                            {formik.errors.digitalSignature}
-                          </p>
-                        </div>
-                      )}
+                  <div className="flex items-center">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        name="digitalSignature"
+                        onChange={(event) => {
+                          setDigitalSignPreview(
+                            URL.createObjectURL(event.currentTarget.files[0]),
+                          );
+                          formik.setFieldValue(
+                            'digitalSignature',
+                            event.currentTarget.files[0],
+                          );
+                        }}
+                        className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                          formik.touched.digitalSignature &&
+                          formik.errors.digitalSignature
+                            ? 'border-danger'
+                            : ''
+                        }`}
+                      />
+                      {formik.touched.digitalSignature &&
+                        formik.errors.digitalSignature && (
+                          <div className="error-message">
+                            <p className="text-danger font-medium text-xs mt-1">
+                              {formik.errors.digitalSignature}
+                            </p>
+                          </div>
+                        )}
+                    </div>
+
+                    {digitalSignPreview && (
+                      <img
+                        src={digitalSignPreview}
+                        alt="Preview"
+                        className="w-16 h-16 object-cover ml-4"
+                      />
+                    )}
                   </div>
                 </div>
+
                 <div className="mb-4"></div>
 
                 <div className="relative w-full mb-3">
@@ -932,20 +962,21 @@ const SignUp = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         placeholder="Enter above captcha code"
-                        className={`w-50 rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                        className={`w-65 rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
                           formik.touched.userCaptcha &&
                           formik.errors.userCaptcha
                             ? 'border-danger'
                             : ''
                         }`}
                       />
-                      {/* {formik.touched.bloodGroup && formik.errors.bloodGroup && (
-                      <div className="error-message">
-                        <p className="text-danger font-medium text-xs mt-1">
-                          {formik.errors.bloodGroup}
-                        </p>
-                      </div>
-                    )} */}
+                      {formik.touched.userCaptcha &&
+                        formik.errors.userCaptcha && (
+                          <div className="error-message">
+                            <p className="text-danger font-medium text-xs mt-1">
+                              {formik.errors.userCaptcha}
+                            </p>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
