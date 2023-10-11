@@ -9,7 +9,6 @@ import './styles/SignUp.css';
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
-  LoadCanvasTemplateNoReload,
   validateCaptcha,
 } from 'react-simple-captcha';
 
@@ -66,7 +65,7 @@ const SignUp = () => {
     }
   };
 
-  const removeFamilyMember = (index) => {
+  const removeFamilyMember = (index: number) => {
     const updatedFamilyMembers = [...formik.values.familyMembers];
     updatedFamilyMembers.splice(index, 1);
     formik.setFieldValue('familyMembers', updatedFamilyMembers);
@@ -75,7 +74,6 @@ const SignUp = () => {
     <>
       <div className="page-container">
         <div className="container mx-auto px-4 h-screen flex flex-col">
-          {/* <div className="flex justify-center items-center h-screen"> */}
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="w-full p-6 sm:p-12.5 xl:p-17.5">
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
@@ -86,6 +84,7 @@ const SignUp = () => {
                 onSubmit={formik.handleSubmit}
                 className="grid grid-cols-2 gap-4"
               >
+                {/* Name */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name
@@ -136,6 +135,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Email */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email
@@ -182,6 +182,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+{/* Password */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Password
@@ -232,6 +233,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+{/* Re-type Password */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Re-type Password
@@ -284,6 +286,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Father's Name */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Father's Name
@@ -334,6 +337,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Address */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Address
@@ -385,6 +389,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Nature of work */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Nature of work
@@ -433,6 +438,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Cell Number */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Cell Number
@@ -478,6 +484,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Education */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Education
@@ -521,6 +528,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Date of Birth */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Date of Birth
@@ -567,6 +575,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Place of Birth */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Place of Birth
@@ -619,6 +628,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Aadhar Number */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Aadhar Number
@@ -649,6 +659,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Blood Group */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Blood Group
@@ -677,6 +688,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Profile Pic */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Profile Pic
@@ -722,6 +734,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
+                {/* Digital Signature */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Digital Signature
@@ -770,6 +783,7 @@ const SignUp = () => {
 
                 <div className="mb-4"></div>
 
+                {/* Family Details */}
                 <div className="relative w-full mb-3">
                   <h3 className="text-lg font-bold mb-2">Family Details</h3>
 
@@ -952,6 +966,7 @@ const SignUp = () => {
                     I READ AND I AGREE WITH SETTIBALIJA WELFARE ASSOCIATION,
                     FRENCH CHANNEL ROAD, YANAM - RULES AND REGULATIONS
                   </label>
+                  {/* Captcha */}
                   <div className="mt-5">
                     <LoadCanvasTemplate reloadColor="red" />
                     <div className="relative">
@@ -981,7 +996,7 @@ const SignUp = () => {
                   </div>
                 </div>
                 <div className="mb-4"></div>
-
+                {/* Create account */}
                 <div className="mb-5">
                   <input
                     type="submit"
@@ -1001,7 +1016,6 @@ const SignUp = () => {
               </div>
             </div>
           </div>
-          {/* </div> */}
         </div>
       </div>
     </>
