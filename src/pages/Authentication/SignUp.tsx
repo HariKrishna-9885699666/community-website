@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import DatePicker from 'react-datepicker';
@@ -5,8 +6,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
 import { registrationValidationSchema } from '../../validationSchema/registrationValidationSchema';
 import './styles/SignUp.css';
+import {
+  loadCaptchaEnginge,
+  LoadCanvasTemplate,
+  LoadCanvasTemplateNoReload,
+  validateCaptcha,
+} from 'react-simple-captcha';
 
 const SignUp = () => {
+  useEffect(() => {
+    loadCaptchaEnginge(6, 'maroon', 'white', 'numbers');
+  }, []);
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -27,13 +37,18 @@ const SignUp = () => {
       familyMembers: [],
       noFamily: false,
       isChecked: false,
+      userCaptcha: '',
     },
     validationSchema: registrationValidationSchema,
     onSubmit: (values) => {
       // Check if the checkbox is checked before submitting
       if (values.isChecked) {
-        // Handle form submission here
-        console.log('Form data:', values);
+        if (validateCaptcha(values.userCaptcha) !== true) {
+          Swal.fire('Captcha not matched.');
+        } else {
+          // Handle form submission here
+          console.log('Form data:', values);
+        }
       } else {
         // Open the modal if terms are not agreed
         Swal.fire('Please agree to the terms and conditions.');
@@ -56,7 +71,7 @@ const SignUp = () => {
   };
   return (
     <>
-      <div class="page-container">
+      <div className="page-container">
         <div className="container mx-auto px-4 h-screen flex flex-col">
           {/* <div className="flex justify-center items-center h-screen"> */}
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -723,6 +738,218 @@ const SignUp = () => {
                       )}
                   </div>
                 </div>
+                <div className="mb-4"></div>
+
+                <div className="relative w-full mb-3">
+                  <h3 className="text-lg font-bold mb-2">Family Details</h3>
+
+                  {/* "Add a Family Member" button */}
+                  <button
+                    type="button"
+                    onClick={addFamilyMember}
+                    className={`${
+                      formik.values.noFamily ? 'disabled-button' : '' // Apply the disabled style if formik.values.noFamily is true
+                    } w-50 cursor-pointer rounded-lg border border-primary bg-strokedark p-4 text-white transition hover:bg-opacity-90`}
+                  >
+                    Add a Family Member
+                  </button>
+
+                  {/* Family Member Fields */}
+                  {formik.values.familyMembers.map((member, index) => (
+                    <div
+                      key={index}
+                      className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mt-5"
+                    >
+                      <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                        <h3 className="font-bold text-black dark:text-white">
+                          Family Member {index + 1}
+                        </h3>
+                      </div>
+                      <form action="#">
+                        <div className="p-6.5">
+                          <div className="mb-4.5">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Name
+                            </label>
+                            <input
+                              type="text"
+                              name={`familyMembers[${index}].name`}
+                              value={member.name}
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              placeholder="Enter your family member name"
+                              className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                                formik.touched.familyMembers?.[index]?.name &&
+                                formik.errors.familyMembers?.[index]?.name
+                                  ? 'border-danger'
+                                  : ''
+                              }`}
+                            />
+                            {formik.touched.familyMembers?.[index]?.name &&
+                              formik.errors.familyMembers?.[index]?.name && (
+                                <div className="error-message">
+                                  <p className="text-danger font-medium text-xs mt-1">
+                                    {formik.errors.familyMembers[index].name}
+                                  </p>
+                                </div>
+                              )}
+                          </div>
+
+                          <div className="mb-4.5">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Age
+                            </label>
+                            <input
+                              type="text"
+                              name={`familyMembers[${index}].age`}
+                              value={member.age}
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              placeholder="Enter your family member age"
+                              className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                                formik.touched.familyMembers?.[index]?.age &&
+                                formik.errors.familyMembers?.[index]?.age
+                                  ? 'border-danger'
+                                  : ''
+                              }`}
+                            />
+                            {formik.touched.familyMembers?.[index]?.age &&
+                              formik.errors.familyMembers?.[index]?.age && (
+                                <div className="error-message">
+                                  <p className="text-danger font-medium text-xs mt-1">
+                                    {formik.errors.familyMembers[index].age}
+                                  </p>
+                                </div>
+                              )}
+                          </div>
+
+                          <div className="mb-4.5">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Relation
+                            </label>
+                            <select
+                              name={`familyMembers[${index}].relation`}
+                              value={member.relation}
+                              onChange={formik.handleChange}
+                              onBlur={formik.handleBlur}
+                              className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                                formik.touched.familyMembers?.[index]
+                                  ?.relation &&
+                                formik.errors.familyMembers?.[index]?.relation
+                                  ? 'border-red-500'
+                                  : ''
+                              }`}
+                            >
+                              <option value="">Select Relation</option>
+                              <option value="Son">Son</option>
+                              <option value="Daughter">Daughter</option>
+                            </select>
+                            {formik.touched.familyMembers?.[index]?.relation &&
+                              formik.errors.familyMembers?.[index]
+                                ?.relation && (
+                                <div className="error-message">
+                                  <p className="text-danger font-medium text-xs mt-1">
+                                    {
+                                      formik.errors.familyMembers[index]
+                                        .relation
+                                    }
+                                  </p>
+                                </div>
+                              )}
+                          </div>
+
+                          {/* Remove Family Member button */}
+                          <button
+                            type="button"
+                            onClick={() => removeFamilyMember(index)}
+                            className="text-red-500 text-xs mt-1"
+                          >
+                            <p className="inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-danger text-danger">
+                              Remove Family Member
+                            </p>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ))}
+                  {/* Error message for at least one family member */}
+                  {formik.touched.familyMembers &&
+                    formik.errors.familyMembers &&
+                    !formik.values.noFamily &&
+                    typeof formik.errors.familyMembers === 'string' && (
+                      <p className="text-danger font-medium text-xs mt-1">
+                        {formik.errors.familyMembers}
+                      </p>
+                    )}
+                </div>
+
+                <div className="mb-4"></div>
+
+                {/* No Family Checkbox */}
+                <div className="relative w-full mb-3">
+                  <label className="block text-blueGray-600 text-sm font-bold mb-2">
+                    No Family
+                    <input
+                      type="checkbox"
+                      name="noFamily"
+                      onChange={(e) => {
+                        // Clear family members when the checkbox is checked
+                        if (e.target.checked) {
+                          formik.setFieldValue('familyMembers', []);
+                        }
+                        formik.handleChange(e);
+                      }}
+                      checked={formik.values.noFamily}
+                      className="ml-2"
+                    />
+                  </label>
+                </div>
+                <br />
+                {/* Terms and Conditions Checkbox */}
+                <div className="relative w-full mb-3">
+                  <input
+                    type="checkbox"
+                    id="isChecked"
+                    name="isChecked"
+                    checked={formik.values.isChecked}
+                    onChange={formik.handleChange}
+                    className="mr-2"
+                  />
+                  <label
+                    htmlFor="isChecked"
+                    className="text-success text-xs font-bold"
+                  >
+                    I READ AND I AGREE WITH SETTIBALIJA WELFARE ASSOCIATION,
+                    FRENCH CHANNEL ROAD, YANAM - RULES AND REGULATIONS
+                  </label>
+                  <div className="mt-5">
+                    <LoadCanvasTemplate reloadColor="red" />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        name="userCaptcha"
+                        value={formik.values.userCaptcha}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        placeholder="Enter above captcha code"
+                        className={`w-50 rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                          formik.touched.userCaptcha &&
+                          formik.errors.userCaptcha
+                            ? 'border-danger'
+                            : ''
+                        }`}
+                      />
+                      {/* {formik.touched.bloodGroup && formik.errors.bloodGroup && (
+                      <div className="error-message">
+                        <p className="text-danger font-medium text-xs mt-1">
+                          {formik.errors.bloodGroup}
+                        </p>
+                      </div>
+                    )} */}
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-4"></div>
 
                 <div className="mb-5">
                   <input
