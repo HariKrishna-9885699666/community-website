@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, createRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import DatePicker from 'react-datepicker';
@@ -11,19 +11,36 @@ import {
   LoadCanvasTemplate,
   validateCaptcha,
 } from 'react-simple-captcha';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
+import { registrationAPI } from '../../api/registration';
 
 const SignUp = () => {
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [digitalSignPreview, setDigitalSignPreview] = useState(null);
+  const profilePicInput = createRef();
+
   useEffect(() => {
     loadCaptchaEnginge(6, 'maroon', 'white', 'numbers');
   }, []);
+
+  const { mutateAsync: registrationMutation } = useMutation(registrationAPI, {
+    onSuccess: (data, variables, context) => {
+      console.log('data', data);
+    },
+  });
+
   const formik = useFormik({
     initialValues: {
       name: '',
       email: '',
-      password: '',
-      confirmPassword: '',
+      password: 'Karbonn23$',
+      confirmPassword: 'Karbonn23$',
       fatherName: '',
       address: '',
       natureOfWork: '',
@@ -41,14 +58,49 @@ const SignUp = () => {
       userCaptcha: '',
     },
     validationSchema: registrationValidationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (userData, { resetForm }) => {
       // Check if the checkbox is checked before submitting
-      if (values.isChecked) {
-        if (validateCaptcha(values.userCaptcha) !== true) {
+      if (userData.isChecked) {
+        if (validateCaptcha(userData.userCaptcha) !== true) {
           Swal.fire('Captcha not matched.');
         } else {
           // Handle form submission here
-          console.log('Form data:', values);
+          // const userPayload = { ...userData };
+          // delete userPayload.confirmPassword;
+          // delete userPayload.familyMembers;
+          // delete userPayload.noFamily;
+          // delete userPayload.isChecked;
+          // delete userPayload.userCaptcha;
+          // console.log('Form data:', userPayload);
+          try {
+            const formData = new FormData();
+            formData.append('name', userData.name);
+            formData.append('email', userData.email);
+            formData.append('password', userData.password);
+            formData.append('fatherName', userData.fatherName);
+            formData.append('address', userData.address);
+            formData.append('natureOfWork', userData.natureOfWork);
+            formData.append('cellNumber', userData.cellNumber);
+            formData.append('education', userData.education);
+            formData.append('dateOfBirth', userData.dateOfBirth);
+            formData.append('placeOfBirth', userData.placeOfBirth);
+            formData.append('aadharNumber', userData.aadharNumber);
+            formData.append('bloodGroup', userData.bloodGroup);
+
+            // Now, if you want to append a file (profilePic) to the FormData
+// console.log('dsdsdsdsdsdsdsds', profilePicInput.current.files[0])
+//   formData.append('profilePic', profilePicInput.current.files[0]);
+
+            formData.append('profilePic' , profilePicPreview)
+
+            await registrationMutation(formData);
+            // resetForm();
+            // setProfilePicPreview(null);
+            // setDigitalSignPreview(null);
+            Swal.fire('Your account is successfully created.');
+          } catch (error) {
+            console.log('error on registration', error);
+          }
         }
       } else {
         // Open the modal if terms are not agreed
@@ -83,6 +135,7 @@ const SignUp = () => {
               <form
                 onSubmit={formik.handleSubmit}
                 className="grid grid-cols-2 gap-4"
+                encType="multipart/form-data"
               >
                 {/* Name */}
                 <div className="mb-4">
@@ -182,7 +235,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
-{/* Password */}
+                {/* Password */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Password
@@ -233,7 +286,7 @@ const SignUp = () => {
                   </div>
                 </div>
 
-{/* Re-type Password */}
+                {/* Re-type Password */}
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Re-type Password
@@ -699,16 +752,15 @@ const SignUp = () => {
                         type="file"
                         accept=".jpg, .jpeg, .png"
                         name="profilePic"
+                        ref={profilePicInput}
                         onChange={(event) => {
-                          setProfilePicPreview(
-                            URL.createObjectURL(event.currentTarget.files[0]),
-                          );
-                          formik.setFieldValue(
-                            'profilePic',
-                            event.currentTarget.files[0],
-                          );
+                          const file = event.target.files[0];
+                          formik.setFieldValue('profilePic', file);
+
+                          // Optionally, you can also set the preview here
+                          setProfilePicPreview(URL.createObjectURL(file));
                         }}
-                        className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                        className={`w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary ${
                           formik.touched.profilePic && formik.errors.profilePic
                             ? 'border-danger'
                             : ''
@@ -754,7 +806,7 @@ const SignUp = () => {
                             event.currentTarget.files[0],
                           );
                         }}
-                        className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                        className={`w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary ${
                           formik.touched.digitalSignature &&
                           formik.errors.digitalSignature
                             ? 'border-danger'
@@ -932,7 +984,7 @@ const SignUp = () => {
                 {/* No Family Checkbox */}
                 <div className="relative w-full mb-3">
                   <label className="block text-blueGray-600 text-sm font-bold mb-2">
-                    No Family
+                    No Family ?
                     <input
                       type="checkbox"
                       name="noFamily"
