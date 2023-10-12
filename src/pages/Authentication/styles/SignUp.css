@@ -9,3 +9,7 @@
   margin-top: 100px;
   /* Adjust the value as needed */
 }
+
+.react-datepicker-wrapper {
+  display: block !important;
+}

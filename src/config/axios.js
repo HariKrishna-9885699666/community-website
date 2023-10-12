@@ -11,7 +11,7 @@ const setupAxios = () => {
     const customConfig = config;
     customConfig.baseURL = baseURL;
     customConfig.headers = {
-      "Content-Type": "application/json",
+      // "Content-Type": "application/json",
     };
 
     return customConfig;

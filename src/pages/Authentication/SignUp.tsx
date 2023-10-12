@@ -1,4 +1,4 @@
-import { useEffect, useState, createRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import DatePicker from 'react-datepicker';
@@ -19,11 +19,11 @@ import {
   QueryClientProvider,
 } from 'react-query';
 import { registrationAPI } from '../../api/registration';
+import 'js-loading-overlay';
 
 const SignUp = () => {
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [digitalSignPreview, setDigitalSignPreview] = useState(null);
-  const profilePicInput = createRef();
 
   useEffect(() => {
     loadCaptchaEnginge(6, 'maroon', 'white', 'numbers');
@@ -37,42 +37,35 @@ const SignUp = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      email: '',
-      password: 'Karbonn23$',
-      confirmPassword: 'Karbonn23$',
-      fatherName: '',
-      address: '',
-      natureOfWork: '',
-      cellNumber: '',
-      education: '',
-      dateOfBirth: null,
-      placeOfBirth: '',
-      aadharNumber: '',
-      bloodGroup: '',
+      name: 'Hari Krishna',
+      email: `testing-${Math.random().toString(36).substring(2, 7)}@gmail.com`,
+      password: 'Tarbonn23$',
+      confirmPassword: 'Tarbonn23$',
+      fatherName: 'ABCD',
+      address: 'HYD',
+      natureOfWork: 'IT',
+      cellNumber: '1234567890',
+      education: 'Btech',
+      dateOfBirth: new Date(), // null
+      placeOfBirth: 'HYD',
+      aadharNumber: '123412341234',
+      bloodGroup: 'O+ve',
       profilePic: '',
       digitalSignature: '',
       familyMembers: [],
-      noFamily: false,
-      isChecked: false,
+      noFamily: true, // false
+      isChecked: true, // false
       userCaptcha: '',
     },
     validationSchema: registrationValidationSchema,
     onSubmit: async (userData, { resetForm }) => {
       // Check if the checkbox is checked before submitting
       if (userData.isChecked) {
-        if (validateCaptcha(userData.userCaptcha) !== true) {
+        if (validateCaptcha(userData.userCaptcha) !== true && false) {
           Swal.fire('Captcha not matched.');
         } else {
-          // Handle form submission here
-          // const userPayload = { ...userData };
-          // delete userPayload.confirmPassword;
-          // delete userPayload.familyMembers;
-          // delete userPayload.noFamily;
-          // delete userPayload.isChecked;
-          // delete userPayload.userCaptcha;
-          // console.log('Form data:', userPayload);
           try {
+            JsLoadingOverlay.show();
             const formData = new FormData();
             formData.append('name', userData.name);
             formData.append('email', userData.email);
@@ -86,20 +79,22 @@ const SignUp = () => {
             formData.append('placeOfBirth', userData.placeOfBirth);
             formData.append('aadharNumber', userData.aadharNumber);
             formData.append('bloodGroup', userData.bloodGroup);
-
-            // Now, if you want to append a file (profilePic) to the FormData
-// console.log('dsdsdsdsdsdsdsds', profilePicInput.current.files[0])
-//   formData.append('profilePic', profilePicInput.current.files[0]);
-
-            formData.append('profilePic' , profilePicPreview)
-
+            formData.append('profilePic' , userData.profilePic);
+            formData.append('digitalSignature' , userData.digitalSignature);
             await registrationMutation(formData);
-            // resetForm();
-            // setProfilePicPreview(null);
-            // setDigitalSignPreview(null);
+            resetForm();
+            setProfilePicPreview(null);
+            setDigitalSignPreview(null);
             Swal.fire('Your account is successfully created.');
           } catch (error) {
             console.log('error on registration', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Error on registration, please try again.',
+            })
+          } finally {
+            JsLoadingOverlay.hide();
           }
         }
       } else {
@@ -752,11 +747,9 @@ const SignUp = () => {
                         type="file"
                         accept=".jpg, .jpeg, .png"
                         name="profilePic"
-                        ref={profilePicInput}
                         onChange={(event) => {
                           const file = event.target.files[0];
                           formik.setFieldValue('profilePic', file);
-
                           // Optionally, you can also set the preview here
                           setProfilePicPreview(URL.createObjectURL(file));
                         }}
@@ -798,13 +791,10 @@ const SignUp = () => {
                         accept=".jpg, .jpeg, .png"
                         name="digitalSignature"
                         onChange={(event) => {
-                          setDigitalSignPreview(
-                            URL.createObjectURL(event.currentTarget.files[0]),
-                          );
-                          formik.setFieldValue(
-                            'digitalSignature',
-                            event.currentTarget.files[0],
-                          );
+                          const file = event.target.files[0];
+                          formik.setFieldValue('digitalSignature', file);
+                          // Optionally, you can also set the preview here
+                          setDigitalSignPreview(URL.createObjectURL(file));
                         }}
                         className={`w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent font-medium outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:py-3 file:px-5 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary ${
                           formik.touched.digitalSignature &&
