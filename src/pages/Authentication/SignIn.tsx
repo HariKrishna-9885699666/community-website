@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useFormik } from 'formik';
 import { useMutation } from 'react-query';
@@ -6,18 +6,19 @@ import { loginValidationSchema } from '../../validationSchema/loginValidationSch
 import { loginAPI } from '../../api/login';
 import 'js-loading-overlay';
 
-const SignIn = () => {
+const SignIn = ({setIsLoggedIn}) => {
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: 'testing-4n8ab@gmail.com',
+      password: 'Tarbonn23$',
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
         JsLoadingOverlay.show();
         // Call the login API using useMutation
-        const { data, error } = await loginMutation.mutateAsync(values);
+        const { data: loginResponse, error } = await loginMutation.mutateAsync(values);
 
         if (error) {
           // Handle API error
@@ -28,7 +29,12 @@ const SignIn = () => {
 
         JsLoadingOverlay.hide();
         // Handle success logic with data
-        console.log(data);
+        console.log(loginResponse);
+        // Redirect to a route after successful login
+        setIsLoggedIn(true);
+        if (loginResponse?.data?.data?.userType === 'ADMIN') {
+          navigate("/admin");
+        }
       } catch (error) {
         // Handle any unexpected errors
         JsLoadingOverlay.hide();

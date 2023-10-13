@@ -12,47 +12,47 @@ const Buttons = lazy(() => import('../pages/UiElements/Buttons'));
 
 const coreRoutes = [
   {
-    path: '/admin/dashboard/calendar',
+    path: '/admin/calendar',
     title: 'Calender',
     component: Calendar,
   },
   {
-    path: '/admin/dashboard/profile',
+    path: '/admin/profile',
     title: 'Profile',
     component: Profile,
   },
   {
-    path: '/admin/dashboard/forms/form-elements',
+    path: '/admin/forms/form-elements',
     title: 'Forms Elements',
     component: FormElements,
   },
   {
-    path: '/admin/dashboard/forms/form-layout',
+    path: '/admin/forms/form-layout',
     title: 'Form Layouts',
     component: FormLayout,
   },
   {
-    path: '/admin/dashboard/tables',
+    path: '/admin/tables',
     title: 'Tables',
     component: Tables,
   },
   {
-    path: '/admin/dashboard/settings',
+    path: '/admin/settings',
     title: 'Settings',
     component: Settings,
   },
   {
-    path: '/admin/dashboard/chart',
+    path: '/admin/chart',
     title: 'Chart',
     component: Chart,
   },
   {
-    path: '/admin/dashboard/ui/alerts',
+    path: '/admin/ui/alerts',
     title: 'Alerts',
     component: Alerts,
   },
   {
-    path: '/admin/dashboard/ui/buttons',
+    path: '/admin/ui/buttons',
     title: 'Buttons',
     component: Buttons,
   },

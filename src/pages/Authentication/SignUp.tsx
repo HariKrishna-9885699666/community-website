@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { useFormik } from 'formik';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -16,6 +16,7 @@ import { registrationAPI } from '../../api/registration';
 import 'js-loading-overlay';
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [digitalSignPreview, setDigitalSignPreview] = useState(null);
 
@@ -86,7 +87,22 @@ const SignUp = () => {
             resetForm();
             setProfilePicPreview(null);
             setDigitalSignPreview(null);
-            Swal.fire('Your account is successfully created.');
+            Swal.fire({
+              icon: 'success',
+              title: 'Your account is successfully created.',
+              footer: '<a href="/">Click here to login</a>',
+            });
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Your account is successfully created.',
+              confirmButtonText: 'Click here to login',
+            }).then((result) => {
+              /* Read more about isConfirmed, isDenied below */
+              if (result.isConfirmed) {
+                navigate("/");
+              }
+            })
           } catch (error) {
             console.log('error on registration', error);
             Swal.fire({

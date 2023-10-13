@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 
-const DefaultLayout = () => {
+const DefaultLayout = ({isLoggedIn, setIsLoggedIn}) => {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
       {/* <!-- ===== Page Wrapper Start ===== --> */}
@@ -17,7 +22,7 @@ const DefaultLayout = () => {
         {/* <!-- ===== Content Area Start ===== --> */}
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setIsLoggedIn={setIsLoggedIn} />
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
