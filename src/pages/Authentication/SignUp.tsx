@@ -11,13 +11,7 @@ import {
   LoadCanvasTemplate,
   validateCaptcha,
 } from 'react-simple-captcha';
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from 'react-query';
+import { useMutation } from 'react-query';
 import { registrationAPI } from '../../api/registration';
 import 'js-loading-overlay';
 
@@ -81,6 +75,13 @@ const SignUp = () => {
             formData.append('bloodGroup', userData.bloodGroup);
             formData.append('profilePic' , userData.profilePic);
             formData.append('digitalSignature' , userData.digitalSignature);
+
+            userData.familyMembers.forEach((obj, index) => {
+              for (const key in obj) {
+                // Append each key-value pair as a field in the FormData
+                formData.append(`familyMembers[${index}][${key}]`, obj[key]);
+              }
+            });
             await registrationMutation(formData);
             resetForm();
             setProfilePicPreview(null);
@@ -107,7 +108,6 @@ const SignUp = () => {
     if (formik.values.familyMembers.length < 5) {
       const newMember = { name: '', age: '', relation: '' };
       const updatedFamilyMembers = [...formik.values.familyMembers, newMember];
-
       formik.setFieldValue('familyMembers', updatedFamilyMembers);
     }
   };
@@ -833,8 +833,9 @@ const SignUp = () => {
                   <button
                     type="button"
                     onClick={addFamilyMember}
+                    disabled={formik.values.noFamily}
                     className={`${
-                      formik.values.noFamily ? 'disabled-button' : '' // Apply the disabled style if formik.values.noFamily is true
+                      formik.values.noFamily ? 'pointer-events-none opacity-50' : '' // Apply the disabled style if formik.values.noFamily is true
                     } w-50 cursor-pointer rounded-lg border border-primary bg-strokedark p-4 text-white transition hover:bg-opacity-90`}
                   >
                     Add a Family Member
@@ -851,7 +852,6 @@ const SignUp = () => {
                           Family Member {index + 1}
                         </h3>
                       </div>
-                      <form action="#">
                         <div className="p-6.5">
                           <div className="mb-4.5">
                             <label className="mb-2.5 block text-black dark:text-white">
@@ -955,7 +955,6 @@ const SignUp = () => {
                             </p>
                           </button>
                         </div>
-                      </form>
                     </div>
                   ))}
                   {/* Error message for at least one family member */}

@@ -1,6 +1,50 @@
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useFormik } from 'formik';
+import { useMutation } from 'react-query';
+import { loginValidationSchema } from '../../validationSchema/loginValidationSchema';
+import { loginAPI } from '../../api/login';
+import 'js-loading-overlay';
 
 const SignIn = () => {
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: loginValidationSchema,
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        JsLoadingOverlay.show();
+        // Call the login API using useMutation
+        const { data, error } = await loginMutation.mutateAsync(values);
+
+        if (error) {
+          // Handle API error
+          JsLoadingOverlay.hide();
+          console.error("Error while calling the login API:", error);
+          return;
+        }
+
+        JsLoadingOverlay.hide();
+        // Handle success logic with data
+        console.log(data);
+      } catch (error) {
+        // Handle any unexpected errors
+        JsLoadingOverlay.hide();
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error?.response?.data?.error,
+        })
+        console.error("Error while processing the login request:", error);
+      }
+    },
+  });
+
+  // Define a mutation for the login API
+  const loginMutation = useMutation(loginAPI);
+
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -9,7 +53,7 @@ const SignIn = () => {
             Sign In to Welfarehub
           </h2>
 
-          <form className="text-left">
+          <form onSubmit={formik.handleSubmit} className="text-left">
             <div className="mb-3 relative">
               <label className="mb-1 block font-medium text-black dark:text-white">
                 Email
@@ -17,10 +61,26 @@ const SignIn = () => {
               <div className="relative">
                 <input
                   type="email"
+                  name="email"
                   placeholder="Enter your email"
-                  className="w-full rounded border border-stroke bg-transparent py-2 px-4 pr-12 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                    formik.touched.name && formik.errors.name
+                      ? 'border-danger'
+                      : ''
+                  }`}
                 />
-                <span className="absolute right-4 top-2">
+                {formik.touched.email && formik.errors.email && (
+                  <div className="error-message">
+                    <p className="text-danger font-medium text-xs mt-1">
+                      {formik.errors.email}
+                    </p>
+                  </div>
+                )}
+
+                <span className="absolute right-4 top-4">
                   <svg
                     className="fill-current"
                     width="22"
@@ -47,10 +107,26 @@ const SignIn = () => {
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
                   placeholder="Password"
-                  className="w-full rounded border border-stroke bg-transparent py-2 px-4 pr-12 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary ${
+                    formik.touched.password && formik.errors.password
+                      ? 'border-danger'
+                      : ''
+                  }`}
                 />
-                <span className="absolute right-4 top-2">
+                {formik.touched.password && formik.errors.password && (
+                  <div className="error-message">
+                    <p className="text-danger font-medium text-xs mt-1">
+                      {formik.errors.password}
+                    </p>
+                  </div>
+                )}
+
+                <span className="absolute right-4 top-4">
                   <svg
                     className="fill-current"
                     width="22"
