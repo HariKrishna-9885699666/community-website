@@ -32,12 +32,13 @@ const SignIn = () => {
       } catch (error) {
         // Handle any unexpected errors
         JsLoadingOverlay.hide();
+        const errorMsg = "Error while processing the login request";
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: error?.response?.data?.error,
+          text: error?.response?.data?.error || errorMsg,
         })
-        console.error("Error while processing the login request:", error);
+        console.error(errorMsg, error);
       }
     },
   });
