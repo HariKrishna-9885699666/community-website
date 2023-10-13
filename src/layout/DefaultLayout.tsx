@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useQueryClient } from 'react-query';
 
 const DefaultLayout = ({isLoggedIn, setIsLoggedIn}) => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const DefaultLayout = ({isLoggedIn, setIsLoggedIn}) => {
       navigate("/");
     }
   }, [isLoggedIn]);
+  const queryClient = useQueryClient();
+  console.log('ffffffffffff', queryClient.getQueryData('authToken'));
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
       {/* <!-- ===== Page Wrapper Start ===== --> */}

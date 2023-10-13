@@ -5,8 +5,10 @@ import { useMutation } from 'react-query';
 import { loginValidationSchema } from '../../validationSchema/loginValidationSchema';
 import { loginAPI } from '../../api/login';
 import 'js-loading-overlay';
+import { useQueryClient } from 'react-query';
 
 const SignIn = ({setIsLoggedIn}) => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -18,7 +20,7 @@ const SignIn = ({setIsLoggedIn}) => {
       try {
         JsLoadingOverlay.show();
         // Call the login API using useMutation
-        const { data: loginResponse, error } = await loginMutation.mutateAsync(values);
+        const { data: loginResponse, error, headers } = await loginMutation.mutateAsync(values);
 
         if (error) {
           // Handle API error
@@ -30,6 +32,10 @@ const SignIn = ({setIsLoggedIn}) => {
         JsLoadingOverlay.hide();
         // Handle success logic with data
         console.log(loginResponse);
+
+        // Extract the token from the response headers and save in React Query's persistence layer
+        queryClient.setQueryData('authToken', headers.authtoken);
+
         // Redirect to a route after successful login
         setIsLoggedIn(true);
         if (loginResponse?.data?.data?.userType === 'ADMIN') {
@@ -51,7 +57,6 @@ const SignIn = ({setIsLoggedIn}) => {
 
   // Define a mutation for the login API
   const loginMutation = useMutation(loginAPI);
-
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
