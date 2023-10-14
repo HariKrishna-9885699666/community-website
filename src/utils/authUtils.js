@@ -12,11 +12,11 @@ export function navigateToLoginPage(navigate) {
   navigate('/');
 }
 
-export function showSessionEndNotification() {
+export function showSessionEndNotification(message) {
   Swal.fire({
     position: 'top-end',
-    icon: 'success',
-    title: 'Your session is ended, please login again.',
+    icon: 'error',
+    title: message,
     showConfirmButton: false,
     timer: 3000,
   });

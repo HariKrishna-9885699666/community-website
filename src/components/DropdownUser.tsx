@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import UserOne from '../images/user/user-01.png';
-import { clearLocalStorage, navigateToLoginPage, showSessionEndNotification } from '../utils/authUtils';
+import { clearLocalStorage, navigateToLoginPage } from '../utils/authUtils';
 
-const DropdownUser = () => {
+const DropdownUser = ({userInfo}) => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -46,13 +46,13 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {userInfo?.name}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{userInfo?.userType}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <img src={UserOne} alt="User" />
+          <img src={userInfo?.profilePic} alt="User" />
         </span>
 
         <svg
