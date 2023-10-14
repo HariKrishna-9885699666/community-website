@@ -12,7 +12,6 @@ const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
@@ -28,9 +27,9 @@ function App() {
         containerClassName="overflow-auto"
       />
       <Routes>
-        <Route path="/" element={<SignIn setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/" element={<SignIn />} />
         <Route path="/auth/signup" element={<SignUp />} />
-        <Route path="/admin" element={<DefaultLayout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}>
+        <Route path="/admin" element={<DefaultLayout />}>
           <Route index element={<ECommerce />} />
           {routes.map((routes, index) => {
             const { path, component: Component } = routes;

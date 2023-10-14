@@ -5,10 +5,8 @@ import { useMutation } from 'react-query';
 import { loginValidationSchema } from '../../validationSchema/loginValidationSchema';
 import { loginAPI } from '../../api/login';
 import 'js-loading-overlay';
-import { useQueryClient } from 'react-query';
 
-const SignIn = ({setIsLoggedIn}) => {
-  const queryClient = useQueryClient();
+const SignIn = () => {
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -33,11 +31,14 @@ const SignIn = ({setIsLoggedIn}) => {
         // Handle success logic with data
         console.log(loginResponse);
 
-        // Extract the token from the response headers and save in React Query's persistence layer
-        queryClient.setQueryData('authToken', headers.authtoken);
+        // Extract the token from the response headers and save  in localStorage
+        localStorage.setItem('authToken', headers.authtoken);
+
+        // Store token expiration in localStorage
+        const expiryInSeconds = Date.now() + parseInt(headers.tokenexpiresin) * 1000;
+        localStorage.setItem('tokenExpiresIn', expiryInSeconds);
 
         // Redirect to a route after successful login
-        setIsLoggedIn(true);
         if (loginResponse?.data?.data?.userType === 'ADMIN') {
           navigate("/admin");
         }

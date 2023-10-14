@@ -33,7 +33,7 @@ const SignUp = () => {
   const formik = useFormik({
     initialValues: {
       name: 'Hari Krishna',
-      email: `testing-${Math.random().toString(36).substring(2, 7)}@gmail.com`,
+      email: `anemharikrishna+${Math.random().toString(36).substring(2, 7)}@gmail.com`,
       password: 'Tarbonn23$',
       confirmPassword: 'Tarbonn23$',
       fatherName: 'ABCD',

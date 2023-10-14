@@ -2,18 +2,20 @@ import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useQueryClient } from 'react-query';
+import { clearLocalStorage, navigateToLoginPage, showSessionEndNotification } from '../utils/authUtils';
 
-const DefaultLayout = ({isLoggedIn, setIsLoggedIn}) => {
+const DefaultLayout = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const expiryInSeconds = localStorage.getItem('tokenExpiresIn');
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/");
+    if (Date.now() > expiryInSeconds) {
+      clearLocalStorage();
+      showSessionEndNotification();
+      navigateToLoginPage(navigate); 
     }
-  }, [isLoggedIn]);
-  const queryClient = useQueryClient();
-  console.log('ffffffffffff', queryClient.getQueryData('authToken'));
+  }, [Date.now()]);
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
       {/* <!-- ===== Page Wrapper Start ===== --> */}
@@ -25,7 +27,7 @@ const DefaultLayout = ({isLoggedIn, setIsLoggedIn}) => {
         {/* <!-- ===== Content Area Start ===== --> */}
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} setIsLoggedIn={setIsLoggedIn} />
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
