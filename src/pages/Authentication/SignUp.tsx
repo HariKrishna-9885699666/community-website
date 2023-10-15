@@ -32,31 +32,31 @@ const SignUp = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: 'Hari Krishna',
-      email: `anemharikrishna+${Math.random().toString(36).substring(2, 7)}@gmail.com`,
-      password: 'Tarbonn23$',
-      confirmPassword: 'Tarbonn23$',
-      fatherName: 'ABCD',
-      address: 'HYD',
-      natureOfWork: 'IT',
-      cellNumber: '1234567890',
-      education: 'Btech',
-      dateOfBirth: new Date(), // null
-      placeOfBirth: 'HYD',
-      aadharNumber: '123412341234',
-      bloodGroup: 'O+ve',
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      fatherName: '',
+      address: '',
+      natureOfWork: '',
+      cellNumber: '',
+      education: '',
+      dateOfBirth: null,
+      placeOfBirth: '',
+      aadharNumber: '',
+      bloodGroup: '',
       profilePic: '',
       digitalSignature: '',
       familyMembers: [],
-      noFamily: true, // false
-      isChecked: true, // false
+      noFamily: false,
+      isChecked: false,
       userCaptcha: '',
     },
     validationSchema: registrationValidationSchema,
     onSubmit: async (userData, { resetForm }) => {
       // Check if the checkbox is checked before submitting
       if (userData.isChecked) {
-        if (validateCaptcha(userData.userCaptcha) !== true && false) {
+        if (validateCaptcha(userData.userCaptcha) !== true) {
           Swal.fire('Captcha not matched.');
         } else {
           try {
@@ -98,7 +98,6 @@ const SignUp = () => {
               title: 'Your account is successfully created.',
               confirmButtonText: 'Click here to login',
             }).then((result) => {
-              /* Read more about isConfirmed, isDenied below */
               if (result.isConfirmed) {
                 navigate("/");
               }

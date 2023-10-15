@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const setupAxios = () => {
-  const baseURL = `http://localhost:3001/api/v1`;
+  const baseURL = `http://13.232.14.174:3001/api/v1`;
 
   const instance = axios.create({
     baseURL,

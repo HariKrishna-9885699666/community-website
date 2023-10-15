@@ -10,8 +10,8 @@ const SignIn = () => {
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
-      email: 'testing-4n8ab@gmail.com',
-      password: 'Tarbonn23$',
+      email: '',
+      password: '',
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values, { resetForm }) => {
